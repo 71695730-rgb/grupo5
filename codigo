@@ -1,1 +1,9 @@
-
+# Código Fuente
+   
+   Esta carpeta contiene todos los archivos de código C++ del proyecto.
+   
+   ## Archivos principales:
+   - `main.cpp` - Programa principal
+   - `lista_enlazada.h` - Implementación de lista enlazada
+   - `cola.h` - Implementación de cola de prioridad
+   - `pila.h` - Implementación de pila
