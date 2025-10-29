@@ -1,3 +1,6 @@
+### Pseudocódigo: Agregar Proceso
+
+```pseudocode
 PROCEDIMIENTO agregarProceso(nombre, prioridad)
 INICIO
     SI nombre está vacío O prioridad < 1 O prioridad > 5 ENTONCES
@@ -40,8 +43,8 @@ INICIO
 FIN
 ```
 
-### Pseudocódigo para cambiar estado del proceso
-```
+### Pseudocódigo: Cambiar Estado del Proceso
+```pseudocode
 PROCEDIMIENTO cambiarEstado(idProceso, nuevoEstado)
 INICIO
     proceso = buscarProceso(idProceso)
@@ -90,3 +93,4 @@ INICIO
     
     RETORNAR verdadero
 FIN
+```
