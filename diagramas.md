@@ -10,7 +10,7 @@ Estructura de Datos - Cola de Prioridad
 Estructura de Datos - Pila (Memoria)
 Casos de Uso del Sistema
 1. Estructura General del Sistema
-mermaid
+```mermaid
 graph TD
     A[Sistema de Gestión de Procesos] --> B[Gestor de Procesos]
     A --> C[Planificador de CPU]
@@ -29,7 +29,7 @@ graph TD
     D1 --> D3[Liberar Memoria - Pop]
     D1 --> D4[Verificar Estado]
 Descripción: Este diagrama muestra la arquitectura general del sistema dividido en tres módulos principales.
-
+    
 2. Diagrama de Flujo - Menú Principal
 mermaid
 flowchart TD
