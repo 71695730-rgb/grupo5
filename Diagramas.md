@@ -1,15 +1,9 @@
-Diagramas del Sistema de Gestión de Procesos - Grupo 5
-Tabla de Contenidos
-Estructura General del Sistema
-Diagrama de Flujo - Menú Principal
-Diagrama de Flujo - Insertar Proceso
-Diagrama de Flujo - Encolar Proceso
-Diagrama de Flujo - Asignar Memoria
-Estructura de Datos - Lista Enlazada
-Estructura de Datos - Cola de Prioridad
-Estructura de Datos - Pila (Memoria)
-Casos de Uso del Sistema
-1. Estructura General del Sistema
+# Diagramas del Sistema de Gestión de Procesos - Grupo 5
+
+---
+
+## 1. Estructura General del Sistema
+
 ```mermaid
 graph TD
     A[Sistema de Gestión de Procesos] --> B[Gestor de Procesos]
@@ -28,10 +22,13 @@ graph TD
     D1 --> D2[Asignar Memoria - Push]
     D1 --> D3[Liberar Memoria - Pop]
     D1 --> D4[Verificar Estado]
-Descripción: Este diagrama muestra la arquitectura general del sistema dividido en tres módulos principales.
-    
-2. Diagrama de Flujo - Menú Principal
-mermaid
+```
+
+---
+
+## 2. Diagrama de Flujo - Menú Principal
+
+```mermaid
 flowchart TD
     Start([Inicio]) --> Menu[Mostrar Menú Principal]
     Menu --> Input[Leer Opción del Usuario]
@@ -55,10 +52,13 @@ flowchart TD
     SubMenu3 --> Menu
     GuardarArchivo --> Menu
     CargarArchivo --> Menu
-Descripción: Flujo principal del programa mostrando la navegación entre módulos.
+```
 
-3. Diagrama de Flujo - Insertar Proceso
-mermaid
+---
+
+## 3. Diagrama de Flujo - Insertar Proceso
+
+```mermaid
 flowchart TD
     Start([Inicio: Insertar Proceso]) --> Input1[Solicitar ID del proceso]
     Input1 --> Input2[Solicitar nombre del proceso]
@@ -84,10 +84,13 @@ flowchart TD
     InsertMiddle --> Success
     Success --> Display[Mostrar mensaje de éxito]
     Display --> End([Fin])
-Descripción: Algoritmo para insertar un nuevo proceso en la lista enlazada con validaciones.
+```
 
-4. Diagrama de Flujo - Encolar Proceso
-mermaid
+---
+
+## 4. Diagrama de Flujo - Encolar Proceso
+
+```mermaid
 flowchart TD
     Start([Inicio: Encolar Proceso]) --> Input[Solicitar ID del proceso]
     Input --> Search[Buscar proceso en lista de procesos]
@@ -110,10 +113,13 @@ flowchart TD
     Success --> UpdateCount[Actualizar contador de cola]
     UpdateCount --> Display[Mostrar mensaje de éxito]
     Display --> End([Fin])
-Descripción: Algoritmo para encolar procesos según su prioridad en la cola del planificador.
+```
 
-5. Diagrama de Flujo - Asignar Memoria
-mermaid
+---
+
+## 5. Diagrama de Flujo - Asignar Memoria
+
+```mermaid
 flowchart TD
     Start([Inicio: Asignar Memoria]) --> Input[Solicitar ID del proceso]
     Input --> Input2[Solicitar tamaño de memoria]
@@ -132,10 +138,13 @@ flowchart TD
     Success --> Display[Mostrar dirección de memoria]
     Display --> ShowStack[Mostrar estado de la pila]
     ShowStack --> End([Fin])
-Descripción: Algoritmo para asignar memoria a un proceso usando operación PUSH en la pila.
+```
 
-6. Estructura de Datos - Lista Enlazada
-mermaid
+---
+
+## 6. Estructura de Datos - Lista Enlazada
+
+```mermaid
 graph LR
     Head[Cabeza/Head] --> N1[Nodo 1<br/>ID: 101<br/>Nombre: Proceso A<br/>Prioridad: 3]
     N1 --> N2[Nodo 2<br/>ID: 102<br/>Nombre: Proceso B<br/>Prioridad: 1]
@@ -146,10 +155,13 @@ graph LR
     style N2 fill:#B4D7FF
     style N3 fill:#B4D7FF
     style NULL fill:#FFB4B4
-Descripción: Representación visual de la lista enlazada simple para gestión de procesos.
+```
 
-7. Estructura de Datos - Cola de Prioridad
-mermaid
+---
+
+## 7. Estructura de Datos - Cola de Prioridad
+
+```mermaid
 graph LR
     Front[Frente] --> P1[Proceso<br/>ID: 105<br/>Prioridad: 1<br/>ALTA]
     P1 --> P2[Proceso<br/>ID: 103<br/>Prioridad: 2<br/>MEDIA]
@@ -162,10 +174,13 @@ graph LR
     style P2 fill:#FFD93D
     style P3 fill:#6BCB77
     style Rear fill:#4D96FF
-Descripción: Cola de prioridad donde los procesos se ordenan según su prioridad (1=alta, 3=baja).
+```
 
-8. Estructura de Datos - Pila (Memoria)
-mermaid
+---
+
+## 8. Estructura de Datos - Pila (Memoria)
+
+```mermaid
 graph TB
     Top[Tope/Top] --> B1[Bloque 3<br/>Proceso: 103<br/>Tamaño: 256 KB<br/>Dir: 0x3000]
     B1 --> B2[Bloque 2<br/>Proceso: 102<br/>Tamaño: 512 KB<br/>Dir: 0x2000]
@@ -178,10 +193,13 @@ graph TB
     style B2 fill:#B4D7FF
     style B3 fill:#B4D7FF
     style Bottom fill:#90EE90
-Descripción: Pila LIFO para gestión de bloques de memoria asignados a procesos.
+```
 
-9. Casos de Uso del Sistema
-mermaid
+---
+
+## 9. Casos de Uso del Sistema
+
+```mermaid
 graph TD
     Usuario([Usuario del Sistema])
     Usuario --> UC1[Agregar nuevo proceso]
@@ -207,28 +225,8 @@ graph TD
     style UC9 fill:#90EE90
     style UC10 fill:#DDA0DD
     style UC11 fill:#DDA0DD
-Descripción: Casos de uso principales del sistema desde la perspectiva del usuario.
+```
 
-Notas de Implementación
-Lista Enlazada (Gestor de Procesos)
-Operaciones: Insertar, eliminar, buscar, modificar
-Complejidad temporal: O(n) para búsqueda, O(1) para inserción al inicio
-Uso: Mantener registro de todos los procesos del sistema
-Cola de Prioridad (Planificador CPU)
-Operaciones: Encolar según prioridad, desencolar, visualizar
-Complejidad temporal: O(n) para encolar con orden, O(1) para desencolar
-Uso: Simular ejecución de procesos según prioridad
-Pila (Gestor de Memoria)
-Operaciones: Push (asignar), Pop (liberar), peek (consultar)
-Complejidad temporal: O(1) para todas las operaciones
-Uso: Gestionar asignación y liberación de bloques de memoria
-Cómo usar estos diagramas
-Para el informe técnico: Exporta cada diagrama como imagen PNG desde GitHub
-Para la presentación: Usa capturas de pantalla de los diagramas renderizados
-Para el código: Estos diagramas sirven como guía para implementar las funciones
-Proyecto: Sistema de Gestión de Procesos
-Grupo: 5
-Asignatura: Estructura de Datos
-Fecha: 2025
+---
 
 
