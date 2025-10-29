@@ -1,5 +1,5 @@
-#include <iostream>   // cout, cin
-#include <string>     // string
+#include <iostream>   // cout, cin, endl
+#include <string>     // se utiliza para poder usar cadenas de texto
 #include <limits>     // ayuda en los limites numericos
 
 using namespace std;
@@ -150,7 +150,7 @@ struct ColaPrioridad {
     }
 
     // Desencolar: sacar el primer elemento (mayor prioridad)
-    // Retorna true si se desencoló y deja el puntero a Proceso en p
+    // Retorna true(verdadero) si se desencoló y deja el puntero a Proceso en p
     bool desencolar(Proceso *&p) {
         if (cabeza == NULL) return false;
         Nodo *tmp = cabeza;
@@ -252,7 +252,7 @@ struct PilaMemoria {
     }
 
     // Eliminar todos los bloques asociados a un PID (cuando se elimina un proceso)
-    // Como la pila no permite eliminar en medio, reconstruimos la pila temporalmente
+    // La pila no permite eliminar en medio, reconstruimos la pila temporalmente
     void eliminarBloquesDePID(int pid) {
         if (tope == NULL) return;
         // Pila temporal (como lista simple con tope temporal)
@@ -322,7 +322,7 @@ void mostrarMenuPrincipal() {
     cout << "Seleccione opción: ";
 }
 
-// Submenu: Gestor de Procesos (Lista)
+// Submenu: Gestor de Procesos (uso de Lista)
 void submenuGestorProcesos(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem) {
     int op = -1;
     while (op != 0) {
