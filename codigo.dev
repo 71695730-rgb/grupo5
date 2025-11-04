@@ -579,9 +579,9 @@ int main() {
             while (lista.inicio != NULL) {
                 int pid = lista.inicio->proc->pid;
                 lista.eliminarProceso(pid);
-            }
-            cout << "Memoria liberada. Programa finalizado.\n";
-        } else {
+             }
+             cout << "Memoria liberada. Programa finalizado.\n";
+         } else {
             cout << "Opción no válida.\n";
         }
     }
