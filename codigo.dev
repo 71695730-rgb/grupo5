@@ -2,196 +2,196 @@
 #include <string>     // se utiliza para poder usar cadenas de texto
 #include <limits>     // ayuda en los limites numericos
 
-using namespace std;
-// ESTRUCTURAS BÁSICAS
-// Estructura Proceso: representa un proceso del sistema
-struct Proceso {
+ using namespace std;
+ // ESTRUCTURAS BÁSICAS
+ // Estructura Proceso: representa un proceso del sistema
+ struct Proceso {
     int pid;            // Identificador único (PID) - el usuario lo ingresa
     string nombre;      // Nombre del proceso (ej. "chrome.exe")
     int prioridad;      // Prioridad (1 = más alta, números mayores = menor prioridad)
     string estado;      // Estado (Nuevo, Listo, Ejecutando, Finalizado)
     int tiempoCPU;      // Tiempo estimado de CPU (ms) - opcional para simular
-};
+ };
 
-// Nodo genérico para usar en lista, cola y pila.
-// El nodo almacena un puntero a Proceso para evitar copias pesadas.
-struct Nodo {
+ // Nodo genérico para usar en lista, cola y pila.
+ // El nodo almacena un puntero a Proceso para evitar copias pesadas.
+ struct Nodo {
     Proceso *proc;   // puntero al Proceso en heap
     Nodo *sig;       // puntero al siguiente nodo en la estructura
     Nodo(Proceso *p) { proc = p; sig = NULL; }
-};
-// LISTA: Gestor de Procesos
-// Lista enlazada simple que contiene todos los procesos creados/registrados.
-struct ListaProcesos {
-    Nodo *inicio;   // puntero al primer nodo de la lista
+ };
+ // LISTA: Gestor de Procesos
+ // Lista enlazada simple que contiene todos los procesos creados/registrados.
+ struct ListaProcesos {
+     Nodo *inicio;   // puntero al primer nodo de la lista
 
-    // Constructor: lista vacía
-    ListaProcesos() { inicio = NULL; }
+     // Constructor: lista vacía
+     ListaProcesos() { inicio = NULL; }
+ 
+     // Busca un proceso por PID en la lista; devuelve puntero al nodo o NULL
+     Nodo* buscarPorPID(int pid) {
+         Nodo *actual = inicio;
+         while (actual != NULL) {
+             if (actual->proc->pid == pid) return actual;
+             actual = actual->sig;
+         }
+         return NULL;
+     }
 
-    // Busca un proceso por PID en la lista; devuelve puntero al nodo o NULL
-    Nodo* buscarPorPID(int pid) {
-        Nodo *actual = inicio;
-        while (actual != NULL) {
-            if (actual->proc->pid == pid) return actual;
-            actual = actual->sig;
-        }
-        return NULL;
-    }
+     // Inserta un proceso al final de la lista (registro de procesos)
+     void insertarProceso(Proceso *p) {
+         Nodo *nuevo = new Nodo(p); // crear nodo dinámico
+         if (inicio == NULL) {
+             // Si la lista está vacía, nuevo nodo es la cabeza
+             inicio = nuevo;
+         } else {
+             // Recorremos hasta el final y enlazamos
+             Nodo *aux = inicio;
+             while (aux->sig != NULL) aux = aux->sig;
+             aux->sig = nuevo;
+         }
+     }
 
-    // Inserta un proceso al final de la lista (registro de procesos)
-    void insertarProceso(Proceso *p) {
-        Nodo *nuevo = new Nodo(p); // crear nodo dinámico
-        if (inicio == NULL) {
-            // Si la lista está vacía, nuevo nodo es la cabeza
-            inicio = nuevo;
-        } else {
-            // Recorremos hasta el final y enlazamos
-            Nodo *aux = inicio;
-            while (aux->sig != NULL) aux = aux->sig;
-            aux->sig = nuevo;
-        }
-    }
+     // Elimina un proceso por PID de la lista (libera la memoria del nodo y del proceso)
+     // Retorna true si se eliminó, false si no se encontró
+     bool eliminarProceso(int pid) {
+         if (inicio == NULL) return false; // lista vacía
 
-    // Elimina un proceso por PID de la lista (libera la memoria del nodo y del proceso)
-    // Retorna true si se eliminó, false si no se encontró
-    bool eliminarProceso(int pid) {
-        if (inicio == NULL) return false; // lista vacía
+         // Caso: el primer elemento es el que hay que eliminar
+         if (inicio->proc->pid == pid) {
+             Nodo *tmp = inicio;
+             inicio = inicio->sig;
+             // Antes de borrar, liberamos memoria del proceso y del nodo
+             delete tmp->proc;
+             delete tmp;
+             return true;
+         }
 
-        // Caso: el primer elemento es el que hay que eliminar
-        if (inicio->proc->pid == pid) {
-            Nodo *tmp = inicio;
-            inicio = inicio->sig;
-            // Antes de borrar, liberamos memoria del proceso y del nodo
-            delete tmp->proc;
-            delete tmp;
-            return true;
-        }
+         // Buscar nodo anterior al que se eliminará
+         Nodo *ant = inicio;
+         Nodo *act = inicio->sig;
+         while (act != NULL) {
+             if (act->proc->pid == pid) {
+                 // Enlazar ant con act->sig y liberar act
+                 ant->sig = act->sig;
+                 delete act->proc;
+                 delete act;
+                 return true;
+             }
+             ant = act;
+             act = act->sig;
+         }
+         return false; // no encontrado
+     }
 
-        // Buscar nodo anterior al que se eliminará
-        Nodo *ant = inicio;
-        Nodo *act = inicio->sig;
-        while (act != NULL) {
-            if (act->proc->pid == pid) {
-                // Enlazar ant con act->sig y liberar act
-                ant->sig = act->sig;
-                delete act->proc;
-                delete act;
-                return true;
-            }
-            ant = act;
-            act = act->sig;
-        }
-        return false; // no encontrado
-    }
+     // Muestra todos los procesos registrados en la lista
+     void mostrarProcesos() {
+         cout << "\n--- PROCESOS REGISTRADOS (Lista) ---\n";
+         if (inicio == NULL) {
+             cout << "No hay procesos registrados.\n";
+             return;
+         }
+         Nodo *aux = inicio;
+         while (aux != NULL) {
+             Proceso *p = aux->proc;
+             cout << "PID: " << p->pid
+                  << " | Nombre: " << p->nombre
+                  << " | Prioridad: " << p->prioridad
+                  << " | Estado: " << p->estado
+                  << " | TiempoCPU: " << p->tiempoCPU << " ms\n";
+             aux = aux->sig;
+         }
+     }
+ };
+ // COLA POR PRIORIDAD: Planificador (Ready Queue)
+ // Implementación de cola donde la inserción mantiene orden por prioridad.
+ // Interpretación: prioridad menor = más prioridad (1 es mayor prioridad).
+ struct ColaPrioridad {
+     Nodo *cabeza; // primer elemento (mayor prioridad)
+     ColaPrioridad() { cabeza = NULL; }
+ 
+     // Verificar si la cola está vacía
+     bool vacia() { return cabeza == NULL; }
+ 
+     // Verificar si un PID ya está en la cola (evita duplicados en la cola)
+     bool estaEnCola(int pid) {
+         Nodo *aux = cabeza;
+         while (aux != NULL) {
+             if (aux->proc->pid == pid) return true;
+             aux = aux->sig;
+         }
+         return false;
+     }
+     // Encolar por prioridad: Insertar ordenado por 'prioridad' ascendente (1...n)
+     // Si prioridades iguales, el nuevo se coloca después (FIFO entre iguales).
+     void encolar(Proceso *p) {
+         Nodo *nuevo = new Nodo(p);
+         // Caso cola vacía -> nuevo es cabeza
+         if (cabeza == NULL) {
+             cabeza = nuevo;
+             return;
+         }
+         // Si la prioridad del nuevo es mayor (número menor) que la de la cabeza -> insertar al frente
+         if (p->prioridad < cabeza->proc->prioridad) {
+             nuevo->sig = cabeza;
+             cabeza = nuevo;
+             return;
+         }
+         // Recorrer hasta encontrar el lugar de inserción: después del último con prioridad <= p->prioridad
+         Nodo *ant = cabeza;
+         Nodo *act = cabeza->sig;
+         while (act != NULL && act->proc->prioridad <= p->prioridad) {
+             ant = act;
+             act = act->sig;
+         }
+         // Insertar después de ant
+         ant->sig = nuevo;
+         nuevo->sig = act;
+     }
+ 
+     // Desencolar: sacar el primer elemento (mayor prioridad)
+     // Retorna true(verdadero) si se desencoló y deja el puntero a Proceso en p
+     bool desencolar(Proceso *&p) {
+         if (cabeza == NULL) return false;
+         Nodo *tmp = cabeza;
+         p = cabeza->proc;
+         cabeza = cabeza->sig;
+         delete tmp; // liberamos el nodo (no el proceso, el proceso sigue vivo en la lista)
+         return true;
+     }
 
-    // Muestra todos los procesos registrados en la lista
-    void mostrarProcesos() {
-        cout << "\n--- PROCESOS REGISTRADOS (Lista) ---\n";
-        if (inicio == NULL) {
-            cout << "No hay procesos registrados.\n";
-            return;
-        }
-        Nodo *aux = inicio;
-        while (aux != NULL) {
-            Proceso *p = aux->proc;
-            cout << "PID: " << p->pid
-                 << " | Nombre: " << p->nombre
-                 << " | Prioridad: " << p->prioridad
-                 << " | Estado: " << p->estado
-                 << " | TiempoCPU: " << p->tiempoCPU << " ms\n";
-            aux = aux->sig;
-        }
-    }
-};
-// COLA POR PRIORIDAD: Planificador (Ready Queue)
-// Implementación de cola donde la inserción mantiene orden por prioridad.
-// Interpretación: prioridad menor = más prioridad (1 es mayor prioridad).
-struct ColaPrioridad {
-    Nodo *cabeza; // primer elemento (mayor prioridad)
-    ColaPrioridad() { cabeza = NULL; }
-
-    // Verificar si la cola está vacía
-    bool vacia() { return cabeza == NULL; }
-
-    // Verificar si un PID ya está en la cola (evita duplicados en la cola)
-    bool estaEnCola(int pid) {
-        Nodo *aux = cabeza;
-        while (aux != NULL) {
-            if (aux->proc->pid == pid) return true;
-            aux = aux->sig;
-        }
-        return false;
-    }
-    // Encolar por prioridad: Insertar ordenado por 'prioridad' ascendente (1...n)
-    // Si prioridades iguales, el nuevo se coloca después (FIFO entre iguales).
-    void encolar(Proceso *p) {
-        Nodo *nuevo = new Nodo(p);
-        // Caso cola vacía -> nuevo es cabeza
-        if (cabeza == NULL) {
-            cabeza = nuevo;
-            return;
-        }
-        // Si la prioridad del nuevo es mayor (número menor) que la de la cabeza -> insertar al frente
-        if (p->prioridad < cabeza->proc->prioridad) {
-            nuevo->sig = cabeza;
-            cabeza = nuevo;
-            return;
-        }
-        // Recorrer hasta encontrar el lugar de inserción: después del último con prioridad <= p->prioridad
-        Nodo *ant = cabeza;
-        Nodo *act = cabeza->sig;
-        while (act != NULL && act->proc->prioridad <= p->prioridad) {
-            ant = act;
-            act = act->sig;
-        }
-        // Insertar después de ant
-        ant->sig = nuevo;
-        nuevo->sig = act;
-    }
-
-    // Desencolar: sacar el primer elemento (mayor prioridad)
-    // Retorna true(verdadero) si se desencoló y deja el puntero a Proceso en p
-    bool desencolar(Proceso *&p) {
-        if (cabeza == NULL) return false;
-        Nodo *tmp = cabeza;
-        p = cabeza->proc;
-        cabeza = cabeza->sig;
-        delete tmp; // liberamos el nodo (no el proceso, el proceso sigue vivo en la lista)
-        return true;
-    }
-
-    // Mostrar cola (desde cabeza a final)
-    void mostrarCola() {
-        cout << "\n--- COLA DE PLANIFICACIÓN (por prioridad) ---\n";
-        if (cabeza == NULL) { cout << "Cola vacía.\n"; return; }
-        Nodo *aux = cabeza;
-        while (aux != NULL) {
-            Proceso *pp = aux->proc;
-            cout << "PID: " << pp->pid
-                 << " | Nombre: " << pp->nombre
-                 << " | Prioridad: " << pp->prioridad
-                 << " | Estado: " << pp->estado << "\n";
-            aux = aux->sig;
-        }
-    }
-
-    // Eliminar un proceso específico de la cola por PID (por ejemplo cuando eliminamos proceso)
-    // Retorna true si se eliminó, false si no se encontró
-    bool eliminarPorPID(int pid) {
-        if (cabeza == NULL) return false;
-        if (cabeza->proc->pid == pid) {
-            Nodo *tmp = cabeza;
-            cabeza = cabeza->sig;
-            delete tmp;
-            return true;
-        }
-        Nodo *ant = cabeza;
-        Nodo *act = cabeza->sig;
-        while (act != NULL) {
-            if (act->proc->pid == pid) {
-                ant->sig = act->sig;
-                delete act;
-                return true;
+     // Mostrar cola (desde cabeza a final)
+     void mostrarCola() {
+         cout << "\n--- COLA DE PLANIFICACIÓN (por prioridad) ---\n";
+         if (cabeza == NULL) { cout << "Cola vacía.\n"; return; }
+         Nodo *aux = cabeza;
+         while (aux != NULL) {
+             Proceso *pp = aux->proc;
+             cout << "PID: " << pp->pid
+                  << " | Nombre: " << pp->nombre
+                  << " | Prioridad: " << pp->prioridad
+                  << " | Estado: " << pp->estado << "\n";
+             aux = aux->sig;
+         }
+     }
+ 
+     // Eliminar un proceso específico de la cola por PID (por ejemplo cuando eliminamos proceso)
+     // Retorna true si se eliminó, false si no se encontró
+     bool eliminarPorPID(int pid) {
+         if (cabeza == NULL) return false;
+         if (cabeza->proc->pid == pid) {
+             Nodo *tmp = cabeza;
+             cabeza = cabeza->sig;
+             delete tmp;
+             return true;
+         }
+         Nodo *ant = cabeza;
+         Nodo *act = cabeza->sig;
+         while (act != NULL) {
+             if (act->proc->pid == pid) {
+                 ant->sig = act->sig;
+                 delete act;
+                 return true;
             }
             ant = act;
             act = act->sig;
