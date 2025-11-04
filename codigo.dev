@@ -72,17 +72,17 @@
          Nodo *act = inicio->sig;
          while (act != NULL) {
              if (act->proc->pid == pid) {
-                // Enlazar ant con act->sig y liberar act
-                ant->sig = act->sig;
-                delete act->proc;
-                delete act;
-                return true;
-             }
-             ant = act;
-             act = act->sig;
-         }
-         return false; // no encontrado
-     }
+               // Enlazar ant con act->sig y liberar act
+               ant->sig = act->sig;
+               delete act->proc;
+               delete act;
+               return true;
+            }
+            ant = act;
+            act = act->sig;
+        }
+        return false; // no encontrado
+    }
 
      // Muestra todos los procesos registrados en la lista
      void mostrarProcesos() {
