@@ -6,11 +6,11 @@
  // ESTRUCTURAS BÁSICAS
  // Estructura Proceso: representa un proceso del sistema
  struct Proceso {
-    int pid;            // Identificador único (PID) - el usuario lo ingresa
-    string nombre;      // Nombre del proceso (ej. "chrome.exe")
-    int prioridad;      // Prioridad (1 = más alta, números mayores = menor prioridad)
-    string estado;      // Estado (Nuevo, Listo, Ejecutando, Finalizado)
-    int tiempoCPU;      // Tiempo estimado de CPU (ms) - opcional para simular
+     int pid;            // Identificador único (PID) - el usuario lo ingresa
+     string nombre;      // Nombre del proceso (ej. "chrome.exe")
+     int prioridad;      // Prioridad (1 = más alta, números mayores = menor prioridad)
+     string estado;      // Estado (Nuevo, Listo, Ejecutando, Finalizado)
+     int tiempoCPU;      // Tiempo estimado de CPU (ms) - opcional para simular
  };
 
  // Nodo genérico para usar en lista, cola y pila.
