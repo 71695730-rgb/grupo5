@@ -583,7 +583,7 @@ int main() {
              cout << "Memoria liberada. Programa finalizado.\n";
          } else {
             cout << "Opción no válida.\n";
-        }
-     }
-     return 0;
- }
+         }
+      }
+      return 0;
+  }
