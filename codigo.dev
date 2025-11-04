@@ -3,6 +3,7 @@
 #include <limits>
 using namespace std;
 
+// Estructura que representa un proceso en el sistema
 struct Proceso {
     int pid;
     string nombre;
@@ -11,16 +12,19 @@ struct Proceso {
     int tiempoCPU;
 };
 
+// Nodo genérico para listas enlazadas (usado en lista, cola y pila)
 struct Nodo {
     Proceso *proc;
     Nodo *sig;
     Nodo(Proceso *p) { proc = p; sig = NULL; }
 };
 
+// Lista enlazada para gestionar procesos (operaciones: insertar, eliminar, buscar, mostrar)
 struct ListaProcesos {
     Nodo *inicio;
     ListaProcesos() { inicio = NULL; }
 
+    // Busca un proceso por PID en la lista
     Nodo* buscarPorPID(int pid) {
         Nodo *actual = inicio;
         while (actual != NULL) {
@@ -30,6 +34,7 @@ struct ListaProcesos {
         return NULL;
     }
 
+    // Inserta un proceso al final de la lista
     void insertarProceso(Proceso *p) {
         Nodo *nuevo = new Nodo(p);
         if (inicio == NULL) inicio = nuevo;
@@ -40,6 +45,7 @@ struct ListaProcesos {
         }
     }
 
+    // Elimina un proceso por PID de la lista
     bool eliminarProceso(int pid) {
         if (inicio == NULL) return false;
         if (inicio->proc->pid == pid) {
@@ -63,6 +69,7 @@ struct ListaProcesos {
         return false;
     }
 
+    // Muestra todos los procesos en la lista
     void mostrarProcesos() {
         cout << "\n--- PROCESOS REGISTRADOS ---\n";
         if (inicio == NULL) { cout << "No hay procesos.\n"; return; }
@@ -79,12 +86,15 @@ struct ListaProcesos {
     }
 };
 
+// Cola de prioridad para planificar procesos en CPU (operaciones: encolar, desencolar, mostrar)
 struct ColaPrioridad {
     Nodo *cabeza;
     ColaPrioridad() { cabeza = NULL; }
 
+    // Verifica si la cola está vacía
     bool vacia() { return cabeza == NULL; }
 
+    // Verifica si un PID está en la cola
     bool estaEnCola(int pid) {
         Nodo *aux = cabeza;
         while (aux != NULL) {
@@ -94,6 +104,7 @@ struct ColaPrioridad {
         return false;
     }
 
+    // Encola un proceso según su prioridad (menor prioridad primero)
     void encolar(Proceso *p) {
         Nodo *nuevo = new Nodo(p);
         if (cabeza == NULL) { cabeza = nuevo; return; }
@@ -111,6 +122,7 @@ struct ColaPrioridad {
         nuevo->sig = act;
     }
 
+    // Desencola el proceso de mayor prioridad (menor número)
     bool desencolar(Proceso *&p) {
         if (cabeza == NULL) return false;
         Nodo *tmp = cabeza;
@@ -120,6 +132,7 @@ struct ColaPrioridad {
         return true;
     }
 
+    // Muestra la cola de planificación
     void mostrarCola() {
         cout << "\n--- COLA DE PLANIFICACIÓN ---\n";
         if (cabeza == NULL) { cout << "Cola vacía.\n"; return; }
@@ -134,6 +147,7 @@ struct ColaPrioridad {
         }
     }
 
+    // Elimina un proceso por PID de la cola
     bool eliminarPorPID(int pid) {
         if (cabeza == NULL) return false;
         if (cabeza->proc->pid == pid) {
@@ -156,6 +170,7 @@ struct ColaPrioridad {
     }
 };
 
+// Estructura para bloques de memoria asignados
 struct BloqueMem {
     Proceso *proc;
     int tamanio;
@@ -163,12 +178,15 @@ struct BloqueMem {
     BloqueMem(Proceso *p, int t) { proc = p; tamanio = t; sig = NULL; }
 };
 
+// Pila para gestionar asignación de memoria (operaciones: asignar, liberar, mostrar)
 struct PilaMemoria {
     BloqueMem *tope;
     PilaMemoria() { tope = NULL; }
 
+    // Verifica si la pila está vacía
     bool vacia() { return tope == NULL; }
 
+    // Asigna un bloque de memoria a un proceso (push)
     void asignarMemoria(Proceso *proc, int tamanio) {
         BloqueMem *nuevo = new BloqueMem(proc, tamanio);
         nuevo->sig = tope;
@@ -176,6 +194,7 @@ struct PilaMemoria {
         cout << "Asignado bloque " << tamanio << " al PID " << proc->pid << ".\n";
     }
 
+    // Libera el bloque de memoria en el tope (pop)
     bool liberarMemoria() {
         if (tope == NULL) { cout << "Pila vacía.\n"; return false; }
         BloqueMem *tmp = tope;
@@ -185,6 +204,7 @@ struct PilaMemoria {
         return true;
     }
 
+    // Muestra el estado actual de la memoria
     void mostrarEstado() {
         cout << "\n--- ESTADO DE MEMORIA ---\n";
         if (tope == NULL) { cout << "No hay memoria asignada.\n"; return; }
@@ -197,6 +217,7 @@ struct PilaMemoria {
         }
     }
 
+    // Elimina todos los bloques de memoria de un PID específico
     void eliminarBloquesDePID(int pid) {
         if (tope == NULL) return;
         BloqueMem *tempTop = NULL;
@@ -217,6 +238,7 @@ struct PilaMemoria {
     }
 };
 
+// Función auxiliar para leer un entero positivo con validación
 int leerEnteroPositivo(const char *mensaje) {
     int x;
     while (true) {
@@ -230,13 +252,16 @@ int leerEnteroPositivo(const char *mensaje) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
+    return 0; // Evita advertencias en Dev-C++
 }
 
+// Función para pausar y esperar ENTER
 void presionarEnter() {
     cout << "\nPresione ENTER para continuar...";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+// Muestra el menú principal
 void mostrarMenuPrincipal() {
     cout << "\n===============================================\n";
     cout << "  SISTEMA DE GESTION DE PROCESOS\n";
@@ -249,13 +274,14 @@ void mostrarMenuPrincipal() {
     cout << "Seleccione opción: ";
 }
 
+// Submenú para gestionar procesos (usa lista enlazada)
 void submenuGestorProcesos(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem) {
     int op = -1;
     while (op != 0) {
         cout << "\n--- GESTOR DE PROCESOS ---\n";
         cout << "1) Insertar\n2) Eliminar\n3) Buscar\n4) Mostrar\n0) Volver\nOpción: ";
-        if (!(cin >> op)) { cin.clear(); cin.ignore(); continue; }
-        cin.ignore();
+        if (!(cin >> op)) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); continue; }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         if (op == 1) {
             int pid;
@@ -292,13 +318,14 @@ void submenuGestorProcesos(ListaProcesos &lista, ColaPrioridad &cola, PilaMemori
     }
 }
 
+// Submenú para planificar CPU (usa cola de prioridad)
 void submenuPlanificador(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem) {
     int op = -1;
     while (op != 0) {
         cout << "\n--- PLANIFICADOR DE CPU ---\n";
         cout << "1) Encolar\n2) Desencolar y ejecutar\n3) Mostrar cola\n4) Verificar PID\n0) Volver\nOpción: ";
-        if (!(cin >> op)) { cin.clear(); cin.ignore(); continue; }
-        cin.ignore();
+        if (!(cin >> op)) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); continue; }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         if (op == 1) {
             int pid = leerEnteroPositivo("PID a encolar: ");
@@ -327,13 +354,14 @@ void submenuPlanificador(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria 
     }
 }
 
+// Submenú para gestionar memoria (usa pila)
 void submenuMemoria(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem) {
     int op = -1;
     while (op != 0) {
         cout << "\n--- GESTOR DE MEMORIA ---\n";
         cout << "1) Asignar\n2) Liberar\n3) Mostrar\n4) Eliminar PID\n0) Volver\nOpción: ";
-        if (!(cin >> op)) { cin.clear(); cin.ignore(); continue; }
-        cin.ignore();
+        if (!(cin >> op)) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); continue; }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         if (op == 1) {
             int pid = leerEnteroPositivo("PID: ");
@@ -356,27 +384,29 @@ void submenuMemoria(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem)
     }
 }
 
+// Muestra el estado de todos los componentes (lista, cola, pila)
 void mostrarTodo(ListaProcesos &lista, ColaPrioridad &cola, PilaMemoria &mem) {
     lista.mostrarProcesos();
     cola.mostrarCola();
     mem.mostrarEstado();
 }
 
+// Función principal: maneja el menú y la lógica general
 int main() {
     ListaProcesos lista;
     ColaPrioridad cola;
     PilaMemoria mem;
     int opcion = -1;
-    while (opcion != 0) {
+    while (opcion != 5) {
         mostrarMenuPrincipal();
-        if (!(cin >> opcion)) { cin.clear(); cin.ignore(); continue; }
-        cin.ignore();
+        if (!(cin >> opcion)) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); continue; }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         if (opcion == 1) submenuGestorProcesos(lista, cola, mem);
         else if (opcion == 2) submenuPlanificador(lista, cola, mem);
         else if (opcion == 3) submenuMemoria(lista, cola, mem);
         else if (opcion == 4) { mostrarTodo(lista, cola, mem); presionarEnter(); }
-        else if (opcion == 0) {
+        else if (opcion == 5) {
             cout << "Saliendo...\n";
             while (!mem.vacia()) mem.liberarMemoria();
             while (lista.inicio != NULL) lista.eliminarProceso(lista.inicio->proc->pid);
