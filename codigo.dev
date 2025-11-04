@@ -584,6 +584,6 @@ int main() {
         } else {
             cout << "Opción no válida.\n";
         }
-    }
-    return 0;
-}
+     }
+     return 0;
+ }
