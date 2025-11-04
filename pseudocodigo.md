@@ -91,6 +91,6 @@ INICIO
         Mostrar "Memoria del proceso liberada"
     FIN SI
     
-    RETORNAR verdadero
+   RETORNAR verdadero
 FIN
 ```
