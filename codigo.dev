@@ -45,10 +45,10 @@
              // Si la lista está vacía, nuevo nodo es la cabeza
              inicio = nuevo;
          } else {
-             // Recorremos hasta el final y enlazamos
-             Nodo *aux = inicio;
-             while (aux->sig != NULL) aux = aux->sig;
-             aux->sig = nuevo;
+            // Recorremos hasta el final y enlazamos
+            Nodo *aux = inicio;
+            while (aux->sig != NULL) aux = aux->sig;
+            aux->sig = nuevo;
          }
      }
 
