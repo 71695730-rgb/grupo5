@@ -518,35 +518,6 @@ graph LR
 
 ---
 
-## Instrucciones para usar estos diagramas:
 
-### PlantUML
-1. Copia el código y guárdalo con extensión `.puml`
-2. Usa [PlantUML Online](http://www.plantuml.com/plantuml/uml/) o instala la extensión en VS Code
-3. Genera las imágenes en formato PNG o SVG
 
-### Mermaid
-1. Copia el código en archivos `.md` o `.mmd`
-2. GitHub renderiza automáticamente los diagramas Mermaid
-3. También puedes usar [Mermaid Live Editor](https://mermaid.live/)
 
-### Estructura recomendada para GitHub:
-```
-proyecto/
-├── docs/
-│   ├── diagramas/
-│   │   ├── README.md (este archivo)
-│   │   ├── contexto.puml
-│   │   ├── casos-uso.puml
-│   │   ├── actividad.puml
-│   │   ├── secuencia.puml
-│   │   ├── clases.puml
-│   │   ├── er-diagram.mmd
-│   │   ├── arquitectura.mmd
-│   │   ├── navegacion.mmd
-│   │   ├── despliegue.mmd
-│   │   └── componentes.mmd
-│   └── images/
-│       └── (imágenes generadas)
-└── README.md
-```
